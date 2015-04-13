@@ -31,5 +31,5 @@
             "Chaplean\\Bundle\\CsvBundle": ""
         }
     },
-    "target-dir" : "Chaplean/Bundle/UnitBundle"
+    "target-dir" : "Chaplean/Bundle/CsvBundle"
 }
