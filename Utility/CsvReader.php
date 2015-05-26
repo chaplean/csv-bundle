@@ -30,6 +30,10 @@ class CsvReader
      */
     public function __construct($file)
     {
+        if (!file_exists($file)) {
+            throw new Exception($file . ': No such file or directory');
+        }
+
         $this->file = $file;
     }
 
@@ -41,10 +45,12 @@ class CsvReader
      * @param string  $endOfLine        Character used on end of lines
      *
      * @return array
+     * @throws Exception
      */
     public function extractData($delimiter, $numberLineIgnore = 0, $endOfLine = self::DEFAULT_END_OF_LINE)
     {
         $myFile = fopen($this->file, 'r');
+
         $data = array();
 
         $file = explode($endOfLine, fread($myFile, filesize($this->file)));
@@ -80,8 +86,8 @@ class CsvReader
             throw new Exception('Bad line !');
         }
 
-        foreach ($values as $key => $value) {
-            $dataLine[] = $value;
+        foreach ($values as $value) {
+            $dataLine[] = str_replace(array("\r"), '', $value);
         }
 
         $this->numColumn = count($values);
