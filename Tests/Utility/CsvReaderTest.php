@@ -86,4 +86,12 @@ class CsvReaderTest extends WebTestCase
         $fileExtract = $csvReader->extractData(';', 2);
         $this->assertCount(2, $fileExtract);
     }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testReadFileNotExists()
+    {
+        new CsvReader('Resources/doc/file_not_found.csv');
+    }
 }
