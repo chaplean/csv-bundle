@@ -91,6 +91,7 @@ class CsvReader
         }
 
         $this->numColumn = count($values);
+
         return $dataLine;
     }
 }

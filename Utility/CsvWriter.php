@@ -13,24 +13,29 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 
 class CsvWriter
 {
-    private $fileName = null;
-
+    /**
+     * @var string
+     */
     private $output = '';
 
+    /**
+     * @var string
+     */
     private $endOfLine;
 
+    /**
+     * @var string
+     */
     private $delimiter;
 
     /**
      * Construct
      *
      * @param string $delimiter Delimiter to use separate datas
-     * @param null   $fileName  Name of file to save
      * @param string $endOfLine End of line
      */
-    public function __construct($delimiter, $fileName = null, $endOfLine = CsvReader::DEFAULT_END_OF_LINE)
+    public function __construct($delimiter, $endOfLine = CsvReader::DEFAULT_END_OF_LINE)
     {
-        $this->fileName  = $fileName;
         $this->delimiter = $delimiter;
         $this->endOfLine = $endOfLine;
     }
@@ -56,10 +61,12 @@ class CsvWriter
      */
     public function write($columns)
     {
-        $line = "";
+        $line = '';
+
         foreach ($columns as $key => $header) {
             $line .= ($key ? $this->delimiter : '') . $header;
         }
+
         $line .= $this->endOfLine;
 
         $this->output .= $line;
@@ -78,13 +85,21 @@ class CsvWriter
     /**
      * Save output in a file if filename is set
      *
+     * @param string $fileName Name of file to save
+     *
      * @return void
      * @throws Exception
      */
-    public function saveCsv()
+    public function saveCsv($fileName)
     {
-        if ($this->fileName != null) {
-            $file = fopen($this->fileName, 'w');
+        if ($fileName != null) {
+            $file = @fopen($fileName, 'w');
+
+            $errors = error_get_last();
+            if (!empty($errors)) {
+                throw new Exception($errors['message']);
+            }
+
             fwrite($file, $this->output);
         } else {
             throw new Exception('No file specified');
