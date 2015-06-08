@@ -156,4 +156,16 @@ class CsvWriterTest extends WebTestCase
 
         $this->assertFalse(file_exists($fileName));
     }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testWriteHeaderAfterWriteContent()
+    {
+        $csvTool = new CsvWriter(';', "\t");
+
+        $csvTool->write(array('1', 'Jean', 'Dupont', '23'));
+
+        $csvTool->writeHeader(array('ID', 'Firstname', 'Lastname', 'Age'));
+    }
 }
