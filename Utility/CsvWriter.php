@@ -38,6 +38,13 @@ class CsvWriter
     {
         $this->delimiter = $delimiter;
         $this->endOfLine = $endOfLine;
+
+        set_error_handler(
+            function ($errno, $errstr) {
+                $errno += null;
+                throw new Exception($errstr);
+            }
+        );
     }
 
     /**
@@ -99,7 +106,6 @@ class CsvWriter
         if ($fileName != null) {
             $file = @fopen($fileName, 'w');
 
-            $errors = error_get_last();
             if (!empty($errors)) {
                 throw new Exception($errors['message']);
             }
