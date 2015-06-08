@@ -46,9 +46,13 @@ class CsvWriter
      * @param array $headers
      *
      * @return void
+     * @throws Exception
      */
     public function writeHeader($headers)
     {
+        if (!empty($this->output)) {
+            throw new Exception('Content not empty !');
+        }
         $this->write($headers);
     }
 
