@@ -1,11 +1,4 @@
 <?php
-/**
- * CsvWriterTest.php.
- *
- * @author    Valentin - Chaplean <valentin@chaplean.com>
- * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
- * @since     0.1.0
- */
 
 namespace Chaplean\Bundle\CsvBundle\Tests\Utility;
 
@@ -13,6 +6,13 @@ use Chaplean\Bundle\CsvBundle\Utility\CsvWriter;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
+/**
+ * CsvWriterTest.php.
+ *
+ * @author    Valentin - Chaplean <valentin@chaplean.com>
+ * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
+ * @since     0.1.0
+ */
 class CsvWriterTest extends WebTestCase
 {
     public function testConstructCsvWriter()
