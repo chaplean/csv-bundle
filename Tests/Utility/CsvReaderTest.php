@@ -1,11 +1,4 @@
 <?php
-/**
- * CsvReaderTest.php.
- *
- * @author    Valentin - Chaplean <valentin@chaplean.com>
- * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
- * @since     0.1.0
- */
 
 namespace Chaplean\Bundle\CsvBundle\Tests\Utility;
 
@@ -13,9 +6,15 @@ use Chaplean\Bundle\CsvBundle\Utility\CsvReader;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
+/**
+ * CsvReaderTest.php.
+ *
+ * @author    Valentin - Chaplean <valentin@chaplean.com>
+ * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
+ * @since     0.1.0
+ */
 class CsvReaderTest extends WebTestCase
 {
-
     public function testExtractDataWithHeader()
     {
         $csvReader = new CsvReader('src/Chaplean/Bundle/CsvBundle/Resources/doc/test_csv_semicolon_delimiter_and_header.csv');
