@@ -1,16 +1,17 @@
 <?php
-/**
- * CsvWriter.php.
- *
- * @author    Valentin - Chaplean <valentin@chaplean.com>
- * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
- * @since     0.1.0
- */
 
 namespace Chaplean\Bundle\CsvBundle\Utility;
 
 use Symfony\Component\Config\Definition\Exception\Exception;
 
+/***
+ * Class CsvWriter.
+ *
+ * @package   Chaplean\Bundle\CsvBundle\Utility
+ * @author    Valentin - Chaplean <valentin@chaplean.com>
+ * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
+ * @since     0.1.0
+ */
 class CsvWriter
 {
     /**

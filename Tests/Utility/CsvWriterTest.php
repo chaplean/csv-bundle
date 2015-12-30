@@ -3,7 +3,7 @@
 namespace Chaplean\Bundle\CsvBundle\Tests\Utility;
 
 use Chaplean\Bundle\CsvBundle\Utility\CsvWriter;
-use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Chaplean\Bundle\UnitBundle\Test\LogicalTest;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
@@ -13,8 +13,11 @@ use Symfony\Component\Config\Definition\Exception\Exception;
  * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
  * @since     0.1.0
  */
-class CsvWriterTest extends WebTestCase
+class CsvWriterTest extends LogicalTest
 {
+    /**
+     * @return void
+     */
     public function testConstructCsvWriter()
     {
         $csvTool = new CsvWriter(';');
@@ -22,6 +25,9 @@ class CsvWriterTest extends WebTestCase
         $this->assertEmpty($csvTool->getContentCsv());
     }
 
+    /**
+     * @return void
+     */
     public function testWriteHeader()
     {
         $csvTool = new CsvWriter(';');
@@ -35,6 +41,9 @@ class CsvWriterTest extends WebTestCase
         $this->assertEquals("ID;Firstname;Lastname;Age\n", $csvTool->getContentCsv());
     }
 
+    /**
+     * @return void
+     */
     public function testWriteContent()
     {
         $csvTool = new CsvWriter(';');
@@ -51,6 +60,9 @@ class CsvWriterTest extends WebTestCase
         $this->assertEquals("1;Jean;Dupont;23\n2;Sophie;Dupuit;22\n", $csvTool->getContentCsv());
     }
 
+    /**
+     * @return void
+     */
     public function testWriteWithDelimiterInContent()
     {
         $csvTool = new CsvWriter(';');
@@ -67,6 +79,9 @@ class CsvWriterTest extends WebTestCase
         $this->assertEquals("1;Jean;Dupon;t;23\n2;Sophie;Dupuit;22\n", $csvTool->getContentCsv());
     }
 
+    /**
+     * @return void
+     */
     public function testSaveWithTabEndOfLine()
     {
         $csvTool = new CsvWriter(';', "\t");
@@ -83,6 +98,9 @@ class CsvWriterTest extends WebTestCase
         $this->assertEquals("1;Jean;Dupont;23\t2;Sophie;Dupuit;22\t", $csvTool->getContentCsv());
     }
 
+    /**
+     * @return void
+     */
     public function testSaveInTwoFile()
     {
         $csv = new CsvWriter(';');
@@ -109,6 +127,7 @@ class CsvWriterTest extends WebTestCase
     }
 
     /**
+     * @return void
      * @expectedException Exception
      */
     public function testSaveWithoutFilename()
@@ -118,6 +137,9 @@ class CsvWriterTest extends WebTestCase
         $csvTool->saveCsv(null);
     }
 
+    /**
+     * @return void
+     */
     public function testSaveWithFilename()
     {
         $fileName = '/tmp/test';
@@ -129,6 +151,7 @@ class CsvWriterTest extends WebTestCase
     }
 
     /**
+     * @return void
      * @expectedException Exception
      * @expectedExceptionMessage fopen(/folder/test): failed to open stream: No such file or directory
      */
@@ -143,6 +166,7 @@ class CsvWriterTest extends WebTestCase
     }
 
     /**
+     * @return void
      * @expectedException Exception
      * @expectedExceptionMessage fopen(/var/log/app.log): failed to open stream: Permission denied
      */
@@ -158,6 +182,7 @@ class CsvWriterTest extends WebTestCase
     }
 
     /**
+     * @return void
      * @expectedException Exception
      */
     public function testWriteHeaderAfterWriteContent()
