@@ -1,5 +1,5 @@
 {
-    "name": "chaplean/bundle",
+    "name": "chaplean/csv-bundle",
     "description": "The Bundle base to fork",
     "type": "symfony-bundle",
     "license": "MIT",
