@@ -1,4 +1,13 @@
-.idea/
-vendor/
-phpunit.xml
-.directory
+.idea
+/web/bundles/
+/app/config/parameters.yml
+/var
+/build/
+/vendor
+/bin/*
+!bin/console
+/phpunit.xml
+behat.yml
+*.php~
+!.gitkeep
+!var/.gitkeep

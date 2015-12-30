@@ -1,0 +1,7 @@
+imports:
+    - { resource: config.yml }
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        dbname:   test_behat_database

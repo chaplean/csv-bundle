@@ -1,16 +1,17 @@
 <?php
-/**
- * CsvReader.php.
- *
- * @author    Valentin - Chaplean <valentin@chaplean.com>
- * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
- * @since     0.1.0
- */
 
 namespace Chaplean\Bundle\CsvBundle\Utility;
 
 use Symfony\Component\Config\Definition\Exception\Exception;
 
+/**
+ * Class CsvReader.
+ *
+ * @package   Chaplean\Bundle\CsvBundle\Utility
+ * @author    Valentin - Chaplean <valentin@chaplean.com>
+ * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
+ * @since     0.1.0
+ */
 class CsvReader
 {
     const DEFAULT_END_OF_LINE = "\n";

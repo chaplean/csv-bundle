@@ -3,7 +3,7 @@
 namespace Chaplean\Bundle\CsvBundle\Tests\Utility;
 
 use Chaplean\Bundle\CsvBundle\Utility\CsvReader;
-use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Chaplean\Bundle\UnitBundle\Test\LogicalTest;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
@@ -13,11 +13,14 @@ use Symfony\Component\Config\Definition\Exception\Exception;
  * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
  * @since     0.1.0
  */
-class CsvReaderTest extends WebTestCase
+class CsvReaderTest extends LogicalTest
 {
+    /**
+     * @return void
+     */
     public function testExtractDataWithHeader()
     {
-        $csvReader = new CsvReader('src/Chaplean/Bundle/CsvBundle/Resources/doc/test_csv_semicolon_delimiter_and_header.csv');
+        $csvReader = new CsvReader('Resources/doc/test_csv_semicolon_delimiter_and_header.csv');
 
         $fileExtract = $csvReader->extractData(';', 1);
 
@@ -26,9 +29,12 @@ class CsvReaderTest extends WebTestCase
         $this->assertEquals($fileExtract[0][0], 'Dupont');
     }
 
+    /**
+     * @return void
+     */
     public function testExtractDataWithSemicolonDelimiter()
     {
-        $csvReader = new CsvReader('src/Chaplean/Bundle/CsvBundle/Resources/doc/test_csv_semicolon_delimiter_and_header.csv');
+        $csvReader = new CsvReader('Resources/doc/test_csv_semicolon_delimiter_and_header.csv');
 
         $fileExtract = $csvReader->extractData(';', 1);
 
@@ -37,10 +43,12 @@ class CsvReaderTest extends WebTestCase
         $this->assertEquals($fileExtract[0][0], 'Dupont');
     }
 
-
+    /**
+     * @return void
+     */
     public function testExtractDataWithoutHeader()
     {
-        $csvReader = new CsvReader('src/Chaplean/Bundle/CsvBundle/Resources/doc/test_csv_tab_delimiter_without_header.csv');
+        $csvReader = new CsvReader('Resources/doc/test_csv_tab_delimiter_without_header.csv');
 
         $fileExtract = $csvReader->extractData("\t");
 
@@ -49,9 +57,12 @@ class CsvReaderTest extends WebTestCase
         $this->assertEquals($fileExtract[0][0], 'Dupont');
     }
 
+    /**
+     * @return void
+     */
     public function testExtractDataWithTabDelimiter()
     {
-        $csvReader = new CsvReader('src/Chaplean/Bundle/CsvBundle/Resources/doc/test_csv_tab_delimiter_without_header.csv');
+        $csvReader = new CsvReader('Resources/doc/test_csv_tab_delimiter_without_header.csv');
 
         $fileExtract = $csvReader->extractData("\t");
 
@@ -60,33 +71,41 @@ class CsvReaderTest extends WebTestCase
         $this->assertEquals($fileExtract[0][0], 'Dupont');
     }
 
+    /**
+     * @return void
+     */
     public function testExtractDataWithtHeaderAndLineEmpty()
     {
-        $csvReader = new CsvReader('src/Chaplean/Bundle/CsvBundle/Resources/doc/test_csv_with_line_empty.csv');
+        $csvReader = new CsvReader('Resources/doc/test_csv_with_line_empty.csv');
 
         $fileExtract = $csvReader->extractData(';', 1);
         $this->assertCount(2, $fileExtract);
     }
 
     /**
+     * @return void
      * @expectedException Exception
      */
     public function testExtractDataWithtInvalidColumn()
     {
-        $csvReader = new CsvReader('src/Chaplean/Bundle/CsvBundle/Resources/doc/test_csv_invalid_number_column.csv');
+        $csvReader = new CsvReader('Resources/doc/test_csv_invalid_number_column.csv');
 
         $csvReader->extractData(';');
     }
 
+    /**
+     * @return void
+     */
     public function testExtractDataWithMultipleLineToIgnore()
     {
-        $csvReader = new CsvReader('src/Chaplean/Bundle/CsvBundle/Resources/doc/test_csv_with_multiple_line_ignore.csv');
+        $csvReader = new CsvReader('Resources/doc/test_csv_with_multiple_line_ignore.csv');
 
         $fileExtract = $csvReader->extractData(';', 2);
         $this->assertCount(2, $fileExtract);
     }
 
     /**
+     * @return void
      * @expectedException Exception
      */
     public function testReadFileNotExists()
