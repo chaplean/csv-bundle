@@ -6,6 +6,7 @@
 /vendor
 /bin/*
 !bin/console
+!bin/firefox.sh
 /phpunit.xml
 behat.yml
 *.php~
