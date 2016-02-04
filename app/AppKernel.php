@@ -32,7 +32,7 @@ class AppKernel extends Kernel
     }
 
     /**
-     * @param \Symfony\Component\Config\Loader\LoaderInterface $loader
+     * @param LoaderInterface $loader
      *
      * @return void
      */
