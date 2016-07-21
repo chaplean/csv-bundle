@@ -3,7 +3,7 @@
 namespace Chaplean\Bundle\CsvBundle\Tests\Utility;
 
 use Chaplean\Bundle\CsvBundle\Utility\CsvReader;
-use Chaplean\Bundle\UnitBundle\Test\LogicalTest;
+use Chaplean\Bundle\UnitBundle\Test\LogicalTestCase;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
@@ -13,7 +13,7 @@ use Symfony\Component\Config\Definition\Exception\Exception;
  * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
  * @since     0.1.0
  */
-class CsvReaderTest extends LogicalTest
+class CsvReaderTest extends LogicalTestCase
 {
     /**
      * @return void
