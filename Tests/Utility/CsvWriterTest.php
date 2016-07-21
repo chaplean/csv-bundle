@@ -168,22 +168,6 @@ class CsvWriterTest extends LogicalTest
     /**
      * @return void
      * @expectedException Exception
-     * @expectedExceptionMessage fopen(/var/log/app.log): failed to open stream: Permission denied
-     */
-    public function testSaveWithFileInRootDirectory()
-    {
-        $fileName = '/var/log/app.log';
-
-        $csvTool = new CsvWriter(';');
-
-        $csvTool->saveCsv($fileName);
-
-        $this->assertFalse(file_exists($fileName));
-    }
-
-    /**
-     * @return void
-     * @expectedException Exception
      */
     public function testWriteHeaderAfterWriteContent()
     {

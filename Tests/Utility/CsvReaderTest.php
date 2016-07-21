@@ -20,7 +20,7 @@ class CsvReaderTest extends LogicalTest
      */
     public function testExtractDataWithHeader()
     {
-        $csvReader = new CsvReader('Resources/doc/test_csv_semicolon_delimiter_and_header.csv');
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_semicolon_delimiter_and_header.csv');
 
         $fileExtract = $csvReader->extractData(';', 1);
 
@@ -34,7 +34,7 @@ class CsvReaderTest extends LogicalTest
      */
     public function testExtractDataWithSemicolonDelimiter()
     {
-        $csvReader = new CsvReader('Resources/doc/test_csv_semicolon_delimiter_and_header.csv');
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_semicolon_delimiter_and_header.csv');
 
         $fileExtract = $csvReader->extractData(';', 1);
 
@@ -48,7 +48,7 @@ class CsvReaderTest extends LogicalTest
      */
     public function testExtractDataWithoutHeader()
     {
-        $csvReader = new CsvReader('Resources/doc/test_csv_tab_delimiter_without_header.csv');
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_tab_delimiter_without_header.csv');
 
         $fileExtract = $csvReader->extractData("\t");
 
@@ -62,7 +62,7 @@ class CsvReaderTest extends LogicalTest
      */
     public function testExtractDataWithTabDelimiter()
     {
-        $csvReader = new CsvReader('Resources/doc/test_csv_tab_delimiter_without_header.csv');
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_tab_delimiter_without_header.csv');
 
         $fileExtract = $csvReader->extractData("\t");
 
@@ -76,7 +76,7 @@ class CsvReaderTest extends LogicalTest
      */
     public function testExtractDataWithtHeaderAndLineEmpty()
     {
-        $csvReader = new CsvReader('Resources/doc/test_csv_with_line_empty.csv');
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_with_line_empty.csv');
 
         $fileExtract = $csvReader->extractData(';', 1);
         $this->assertCount(2, $fileExtract);
@@ -88,7 +88,7 @@ class CsvReaderTest extends LogicalTest
      */
     public function testExtractDataWithtInvalidColumn()
     {
-        $csvReader = new CsvReader('Resources/doc/test_csv_invalid_number_column.csv');
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_invalid_number_column.csv');
 
         $csvReader->extractData(';');
     }
@@ -98,7 +98,7 @@ class CsvReaderTest extends LogicalTest
      */
     public function testExtractDataWithMultipleLineToIgnore()
     {
-        $csvReader = new CsvReader('Resources/doc/test_csv_with_multiple_line_ignore.csv');
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_with_multiple_line_ignore.csv');
 
         $fileExtract = $csvReader->extractData(';', 2);
         $this->assertCount(2, $fileExtract);
@@ -110,6 +110,6 @@ class CsvReaderTest extends LogicalTest
      */
     public function testReadFileNotExists()
     {
-        new CsvReader('Resources/doc/file_not_found.csv');
+        new CsvReader(__DIR__ . '/../Resources/csv/file_not_found.csv');
     }
 }
