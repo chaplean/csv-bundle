@@ -3,7 +3,7 @@
 namespace Chaplean\Bundle\CsvBundle\Tests\Utility;
 
 use Chaplean\Bundle\CsvBundle\Utility\CsvWriter;
-use Chaplean\Bundle\UnitBundle\Test\LogicalTest;
+use Chaplean\Bundle\UnitBundle\Test\LogicalTestCase;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
@@ -13,7 +13,7 @@ use Symfony\Component\Config\Definition\Exception\Exception;
  * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
  * @since     0.1.0
  */
-class CsvWriterTest extends LogicalTest
+class CsvWriterTest extends LogicalTestCase
 {
     /**
      * @return void
@@ -158,22 +158,6 @@ class CsvWriterTest extends LogicalTest
     public function testSaveWithFilenamePathNotExsit()
     {
         $fileName = '/folder/test';
-        $csvTool = new CsvWriter(';');
-
-        $csvTool->saveCsv($fileName);
-
-        $this->assertFalse(file_exists($fileName));
-    }
-
-    /**
-     * @return void
-     * @expectedException Exception
-     * @expectedExceptionMessage fopen(/var/log/app.log): failed to open stream: Permission denied
-     */
-    public function testSaveWithFileInRootDirectory()
-    {
-        $fileName = '/var/log/app.log';
-
         $csvTool = new CsvWriter(';');
 
         $csvTool->saveCsv($fileName);
