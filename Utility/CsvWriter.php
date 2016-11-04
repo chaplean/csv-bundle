@@ -39,13 +39,6 @@ class CsvWriter
     {
         $this->delimiter = $delimiter;
         $this->endOfLine = $endOfLine;
-
-        set_error_handler(
-            function ($errno, $errstr) {
-                $errno += null;
-                throw new Exception($errstr);
-            }
-        );
     }
 
     /**
@@ -104,16 +97,27 @@ class CsvWriter
      */
     public function saveCsv($fileName)
     {
+        $handlerToRestore = set_error_handler(
+            function ($errno, $errstr) {
+                $errno += null;
+                throw new Exception($errstr);
+            }
+        );
+
         if ($fileName != null) {
             $file = @fopen($fileName, 'w');
 
             if (!empty($errors)) {
+                set_error_handler($handlerToRestore);
                 throw new Exception($errors['message']);
             }
 
             fwrite($file, $this->output);
         } else {
+            set_error_handler($handlerToRestore);
             throw new Exception('No file specified');
         }
+
+        set_error_handler($handlerToRestore);
     }
 }
