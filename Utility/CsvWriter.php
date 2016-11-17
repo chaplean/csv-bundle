@@ -69,7 +69,7 @@ class CsvWriter
         $line = '';
 
         foreach ($columns as $key => $header) {
-            $line .= ($key ? $this->delimiter : '') . $header;
+            $line .= ($key ? $this->delimiter : '') . '"' . $this->escapeText($header) . '"';
         }
 
         $line .= $this->endOfLine;
@@ -119,5 +119,15 @@ class CsvWriter
         }
 
         set_error_handler($handlerToRestore);
+    }
+
+    /**
+     * @param $text
+     *
+     * @return string
+     */
+    public function escapeText($text)
+    {
+        return str_replace('"', '""', $text);
     }
 }

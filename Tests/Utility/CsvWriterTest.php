@@ -38,7 +38,7 @@ class CsvWriterTest extends LogicalTestCase
 
         $csvTool->writeHeader($headers);
 
-        $this->assertEquals("ID;Firstname;Lastname;Age\n", $csvTool->getContentCsv());
+        $this->assertEquals('"ID";"Firstname";"Lastname";"Age"' . "\n", $csvTool->getContentCsv());
     }
 
     /**
@@ -57,7 +57,7 @@ class CsvWriterTest extends LogicalTestCase
             $csvTool->write($line);
         }
 
-        $this->assertEquals("1;Jean;Dupont;23\n2;Sophie;Dupuit;22\n", $csvTool->getContentCsv());
+        $this->assertEquals('"1";"Jean";"Dupont";"23"' . "\n" . '"2";"Sophie";"Dupuit";"22"' . "\n", $csvTool->getContentCsv());
     }
 
     /**
@@ -76,7 +76,26 @@ class CsvWriterTest extends LogicalTestCase
             $csvTool->write($line);
         }
 
-        $this->assertEquals("1;Jean;Dupon;t;23\n2;Sophie;Dupuit;22\n", $csvTool->getContentCsv());
+        $this->assertEquals('"1";"Jean";"Dupon;t";"23"' . "\n" . '"2";"Sophie";"Dupuit";"22"' . "\n", $csvTool->getContentCsv());
+    }
+
+    /**
+     * @return void
+     */
+    public function testWriteWithDoubleQuoteInContent()
+    {
+        $csvTool = new CsvWriter(';');
+
+        $content = array(
+            array('1', 'Jean', 'Du"p"ont', '23'),
+            array('2', 'Sophie', 'Du"p"uit', '22'),
+        );
+
+        foreach ($content as $line) {
+            $csvTool->write($line);
+        }
+
+        $this->assertEquals('"1";"Jean";"Du""p""ont";"23"' . "\n" . '"2";"Sophie";"Du""p""uit";"22"' . "\n", $csvTool->getContentCsv());
     }
 
     /**
@@ -95,7 +114,7 @@ class CsvWriterTest extends LogicalTestCase
             $csvTool->write($line);
         }
 
-        $this->assertEquals("1;Jean;Dupont;23\t2;Sophie;Dupuit;22\t", $csvTool->getContentCsv());
+        $this->assertEquals('"1";"Jean";"Dupont";"23"' . "\t" . '"2";"Sophie";"Dupuit";"22"' . "\t", $csvTool->getContentCsv());
     }
 
     /**
@@ -114,7 +133,7 @@ class CsvWriterTest extends LogicalTestCase
             $csv->write($line);
         }
 
-        $this->assertEquals("1;Jean;Dupont;23\n2;Sophie;Dupuit;22\n", $csv->getContentCsv());
+        $this->assertEquals('"1";"Jean";"Dupont";"23"' . "\n" . '"2";"Sophie";"Dupuit";"22"' . "\n", $csv->getContentCsv());
 
         $file1 = '/tmp/test1.csv';
         $file2 = '/tmp/test2.csv';
