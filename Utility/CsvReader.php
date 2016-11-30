@@ -88,7 +88,7 @@ class CsvReader
         }
 
         foreach ($values as $value) {
-            $dataLine[] = str_replace(array("\r"), '', $value);
+            $dataLine[] = trim(str_replace(array("\r"), '', $value), '"');
         }
 
         $this->numColumn = count($values);
