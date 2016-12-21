@@ -2,15 +2,17 @@
 
 namespace Chaplean\Bundle\CsvBundle\Tests\Utility;
 
+use Chaplean\Bundle\CsvBundle\Tests\Model\TestModel;
+use Chaplean\Bundle\CsvBundle\Utility\CsvReader;
 use Chaplean\Bundle\CsvBundle\Utility\CsvWriter;
 use Chaplean\Bundle\UnitBundle\Test\LogicalTestCase;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * CsvWriterTest.php.
  *
  * @author    Valentin - Chaplean <valentin@chaplean.com>
- * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
+ * @copyright 2014 - 2016 Chaplean (http://www.chaplean.com)
  * @since     0.1.0
  */
 class CsvWriterTest extends LogicalTestCase
@@ -18,182 +20,310 @@ class CsvWriterTest extends LogicalTestCase
     /**
      * @return void
      */
-    public function testConstructCsvWriter()
+    public function testSetDataWithArray()
     {
-        $csvTool = new CsvWriter(';');
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
 
-        $this->assertEmpty($csvTool->getContentCsv());
+        $csvWriter->setData(array(
+            new TestModel(),
+            new TestModel()
+        ));
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
     }
 
     /**
      * @return void
      */
-    public function testWriteHeader()
+    public function testSetDataWithGenerator()
     {
-        $csvTool = new CsvWriter(';');
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
 
-        $headers = array(
-            'ID', 'Firstname', 'Lastname', 'Age'
+        $csvWriter->setData($this->generator());
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+    }
+
+    /**
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetDataWithInvalidData()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData(null);
+    }
+
+    /**
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSerializeRowWithArrayChecksModelClass()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData(array(
+            new TestModel(),
+            new TestModel()
+        ));
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new \stdClass()));
+    }
+
+    /**
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSerializeRowWithGeneratorChecksModelClass()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData($this->generator());
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new \stdClass()));
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeRowWithArray()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData(array(
+            new TestModel(),
+            new TestModel()
+        ));
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $result = $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+
+        $this->assertEquals('"test""test";"42";"3.14"' . "\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeRowWithGenerator()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData($this->generator());
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $result = $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+
+        $this->assertEquals('"test""test";"42";"3.14"' . "\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeHeadersWithArray()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData(array(
+            new TestModel(),
+            new TestModel()
+        ));
+
+        $serializeHeaders = $this->getNotPublicMethod(CsvWriter::class, 'serializeHeaders');
+        $result = $serializeHeaders->invokeArgs($csvWriter, array());
+
+        $this->assertEquals('"string";"integer";"float"' . "\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeHeadersWithGenerator()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData($this->generator());
+
+        $serializeHeaders = $this->getNotPublicMethod(CsvWriter::class, 'serializeHeaders');
+        $result = $serializeHeaders->invokeArgs($csvWriter, array());
+
+        $this->assertEquals('"string";"integer";"float"' . "\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeRowWithArrayWithCustomParameters()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData(array(
+            new TestModel(),
+            new TestModel()
+        ));
+        $csvWriter->setDelimiter(',');
+        $csvWriter->setSurrounding("'");
+        $csvWriter->setEndOfLine("\r\n");
+        $csvWriter->setTranslationPrefix("test.csv");
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $result = $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+
+        $this->assertEquals("'test\"test','42','3.14'\r\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeRowWithGeneratorWithCustomParameters()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData($this->generator());
+        $csvWriter->setDelimiter(',');
+        $csvWriter->setSurrounding("'");
+        $csvWriter->setEndOfLine("\r\n");
+        $csvWriter->setTranslationPrefix("test.csv");
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $result = $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+
+        $this->assertEquals("'test\"test','42','3.14'\r\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeHeadersWithArrayAndCustomParameters()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData(array(
+            new TestModel(),
+            new TestModel()
+        ));
+        $csvWriter->setDelimiter(',');
+        $csvWriter->setSurrounding("'");
+        $csvWriter->setEndOfLine("\r\n");
+        $csvWriter->setTranslationPrefix("test.csv");
+
+        $serializeHeaders = $this->getNotPublicMethod(CsvWriter::class, 'serializeHeaders');
+        $result = $serializeHeaders->invokeArgs($csvWriter, array());
+
+        $this->assertEquals("'String','Integer','Float'\r\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeHeadersWithGeneratorAndCustomParameters()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData($this->generator());
+        $csvWriter->setDelimiter(',');
+        $csvWriter->setSurrounding("'");
+        $csvWriter->setEndOfLine("\r\n");
+        $csvWriter->setTranslationPrefix("test.csv");
+
+        $serializeHeaders = $this->getNotPublicMethod(CsvWriter::class, 'serializeHeaders');
+        $result = $serializeHeaders->invokeArgs($csvWriter, array());
+
+        $this->assertEquals("'String','Integer','Float'\r\n", $result);
+    }
+
+    /**
+     * @return void
+     * @expectedException \LogicException
+     */
+    public function testWriteToResponseWithoutData()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->writeToResponse('test_file');
+    }
+
+    /**
+     * @return void
+     * @expectedException \LogicException
+     */
+    public function testWriteToFileWithoutData()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->writeToFile('/tmp/test_file.csv');
+    }
+
+    /**
+     * @return void
+     */
+    public function testWriteToResponse()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData(array(
+            new TestModel(),
+            new TestModel()
+        ));
+
+        $response = $csvWriter->writeToResponse('test_file');
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+
+        // Can't test generated output because expectOutputString is based on ob_flush
+        // and we need to call it in streamCallback().
+    }
+
+    /**
+     * @return void
+     */
+    public function testWriteToFile()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData($this->generator());
+
+        $success = $csvWriter->writeToFile('/tmp/test_file.csv');
+        $this->assertTrue($success);
+
+        $csvReader = new CsvReader('/tmp/test_file.csv');
+        $readData = $csvReader->extractData(';');
+        $this->assertEquals(
+            array(
+                array('string', 'integer', 'float'),
+                array('test""test', '42', '3.14'),
+                array('test""test', '42', '3.14'),
+            ),
+            $readData
         );
-
-        $csvTool->writeHeader($headers);
-
-        $this->assertEquals('"ID";"Firstname";"Lastname";"Age"' . "\n", $csvTool->getContentCsv());
     }
 
     /**
-     * @return void
+     * @return \Generator
      */
-    public function testWriteContent()
+    public function generator()
     {
-        $csvTool = new CsvWriter(';');
-
-        $content = array(
-            array('1', 'Jean', 'Dupont', '23'),
-            array('2', 'Sophie', 'Dupuit', '22'),
-        );
-
-        foreach ($content as $line) {
-            $csvTool->write($line);
-        }
-
-        $this->assertEquals('"1";"Jean";"Dupont";"23"' . "\n" . '"2";"Sophie";"Dupuit";"22"' . "\n", $csvTool->getContentCsv());
-    }
-
-    /**
-     * @return void
-     */
-    public function testWriteWithDelimiterInContent()
-    {
-        $csvTool = new CsvWriter(';');
-
-        $content = array(
-            array('1', 'Jean', 'Dupon;t', '23'),
-            array('2', 'Sophie', 'Dupuit', '22'),
-        );
-
-        foreach ($content as $line) {
-            $csvTool->write($line);
-        }
-
-        $this->assertEquals('"1";"Jean";"Dupon;t";"23"' . "\n" . '"2";"Sophie";"Dupuit";"22"' . "\n", $csvTool->getContentCsv());
-    }
-
-    /**
-     * @return void
-     */
-    public function testWriteWithDoubleQuoteInContent()
-    {
-        $csvTool = new CsvWriter(';');
-
-        $content = array(
-            array('1', 'Jean', 'Du"p"ont', '23'),
-            array('2', 'Sophie', 'Du"p"uit', '22'),
-        );
-
-        foreach ($content as $line) {
-            $csvTool->write($line);
-        }
-
-        $this->assertEquals('"1";"Jean";"Du""p""ont";"23"' . "\n" . '"2";"Sophie";"Du""p""uit";"22"' . "\n", $csvTool->getContentCsv());
-    }
-
-    /**
-     * @return void
-     */
-    public function testSaveWithTabEndOfLine()
-    {
-        $csvTool = new CsvWriter(';', "\t");
-
-        $content = array(
-            array('1', 'Jean', 'Dupont', '23'),
-            array('2', 'Sophie', 'Dupuit', '22'),
-        );
-
-        foreach ($content as $line) {
-            $csvTool->write($line);
-        }
-
-        $this->assertEquals('"1";"Jean";"Dupont";"23"' . "\t" . '"2";"Sophie";"Dupuit";"22"' . "\t", $csvTool->getContentCsv());
-    }
-
-    /**
-     * @return void
-     */
-    public function testSaveInTwoFile()
-    {
-        $csv = new CsvWriter(';');
-
-        $content = array(
-            array('1', 'Jean', 'Dupont', '23'),
-            array('2', 'Sophie', 'Dupuit', '22'),
-        );
-
-        foreach ($content as $line) {
-            $csv->write($line);
-        }
-
-        $this->assertEquals('"1";"Jean";"Dupont";"23"' . "\n" . '"2";"Sophie";"Dupuit";"22"' . "\n", $csv->getContentCsv());
-
-        $file1 = '/tmp/test1.csv';
-        $file2 = '/tmp/test2.csv';
-
-        $csv->saveCsv($file1);
-        $csv->saveCsv($file2);
-
-        $this->assertTrue(file_exists($file1));
-        $this->assertTrue(file_exists($file2));
-    }
-
-    /**
-     * @return void
-     * @expectedException Exception
-     */
-    public function testSaveWithoutFilename()
-    {
-        $csvTool = new CsvWriter(';');
-
-        $csvTool->saveCsv(null);
-    }
-
-    /**
-     * @return void
-     */
-    public function testSaveWithFilename()
-    {
-        $fileName = '/tmp/test';
-        $csvTool = new CsvWriter(';');
-
-        $csvTool->saveCsv($fileName);
-
-        $this->assertTrue(file_exists($fileName));
-    }
-
-    /**
-     * @return void
-     * @expectedException Exception
-     * @expectedExceptionMessage fopen(/folder/test): failed to open stream: No such file or directory
-     */
-    public function testSaveWithFilenamePathNotExsit()
-    {
-        $fileName = '/folder/test';
-        $csvTool = new CsvWriter(';');
-
-        $csvTool->saveCsv($fileName);
-
-        $this->assertFalse(file_exists($fileName));
-    }
-
-    /**
-     * @return void
-     * @expectedException Exception
-     */
-    public function testWriteHeaderAfterWriteContent()
-    {
-        $csvTool = new CsvWriter(';', "\t");
-
-        $csvTool->write(array('1', 'Jean', 'Dupont', '23'));
-
-        $csvTool->writeHeader(array('ID', 'Firstname', 'Lastname', 'Age'));
+        yield new TestModel();
+        yield new TestModel();
     }
 }
