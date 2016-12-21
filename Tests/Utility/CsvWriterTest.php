@@ -319,6 +319,20 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @return void
+     */
+    public function testWriteToFileFailToCreateDirectory()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData($this->generator());
+
+        $success = $csvWriter->writeToFile('/sys/dir/test.csv');
+        $this->assertFalse($success);
+    }
+
+    /**
      * @return \Generator
      */
     public function generator()
