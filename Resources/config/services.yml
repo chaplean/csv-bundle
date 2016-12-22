@@ -1,1 +1,5 @@
-#services:
+services:
+    chaplean.csv.writer:
+        class: Chaplean\Bundle\CsvBundle\Utility\CsvWriter
+        arguments: ['@translator.default']
+        shared: false

@@ -14,6 +14,8 @@ use Symfony\Component\Config\Definition\Exception\Exception;
  */
 class CsvReader
 {
+    const DEFAULT_DELIMITER = ';';
+    const DEFAULT_SURROUNDING = '"';
     const DEFAULT_END_OF_LINE = "\n";
 
     /**
