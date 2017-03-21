@@ -49,6 +49,68 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage You have to provide $dataClass if $data can be empty
+     *
+     * @return void
+     */
+    public function testSetDataWithEmptyArray()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData(array());
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage You have to provide $dataClass if $data can be empty
+     *
+     * @return void
+     */
+    public function testSetDataWithEmptyGenerator()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData($this->emptyGenerator());
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetDataWithEmptyArrayAndDataClass()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData(array(), TestModel::class);
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetDataWithEmptyGeneratorAndDataClass()
+    {
+        /** @var CsvWriter $csvWriter */
+        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+
+        $csvWriter->setData($this->emptyGenerator(), TestModel::class);
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+    }
+
+    /**
      * @return void
      * @expectedException \InvalidArgumentException
      */
@@ -339,5 +401,14 @@ class CsvWriterTest extends LogicalTestCase
     {
         yield new TestModel();
         yield new TestModel();
+    }
+
+    /**
+     * @return \Generator
+     */
+    public function emptyGenerator()
+    {
+        return;
+        yield;
     }
 }

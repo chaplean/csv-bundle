@@ -3,6 +3,7 @@
 namespace Chaplean\Bundle\CsvBundle\Utility;
 
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
+use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -21,6 +22,9 @@ class CsvWriter
 
     /** @var array|\Iterator $data */
     protected $data;
+
+    /** @var mixed|null $data */
+    protected $firstItem;
 
     /** @var string $translationPrefix */
     protected $translationPrefix;
@@ -47,6 +51,7 @@ class CsvWriter
         $this->translator = $translator;
 
         $this->data = null;
+        $this->firstItem = null;
         $this->translationPrefix = '';
         $this->dataClass = null;
 
@@ -99,12 +104,16 @@ class CsvWriter
      *
      * $data must always contain instances of the same class
      *
-     * @param $data
+     * $dataClass is the class name (as per get_class()). It's used as a substitute
+     * in case $data is empty.
+     *
+     * @param array|\Iterator $data
+     * @param string          $dataClass
      *
      * @return void
      * @throws \InvalidArgumentException
      */
-    public function setData($data)
+    public function setData($data, $dataClass = null)
     {
         if (!(is_array($data) || $data instanceof \Iterator)) {
             throw new \InvalidArgumentException('$data must be an array or a \Iterator');
@@ -112,8 +121,17 @@ class CsvWriter
 
         $this->data = $data;
 
-        $firstItem = is_array($data) ? $data[0] : $data->current();
-        $this->dataClass = get_class($firstItem);
+        $this->firstItem = is_array($data)
+            ? $data[0] ?? null
+            : $data->current();
+
+        if ($this->firstItem !== null) {
+            $this->dataClass = get_class($this->firstItem);
+        } else if ($dataClass !== null) {
+            $this->dataClass = $dataClass;
+        } else {
+            throw new \InvalidArgumentException('You have to provide $dataClass if $data can be empty');
+        }
     }
 
     /**
@@ -146,11 +164,13 @@ class CsvWriter
         $callback = function() {
             echo $this->serializeHeaders();
 
-            foreach ($this->data as $row) {
-                echo $this->serializeRow($row);
+            if ($this->firstItem !== null) {
+                foreach ($this->data as $row) {
+                    echo $this->serializeRow($row);
 
-                ob_flush();
-                flush();
+                    ob_flush();
+                    flush();
+                }
             }
         };
 
@@ -187,9 +207,11 @@ class CsvWriter
                 throw new \RuntimeException('Failed to write to the file: ' . $path);
             }
 
-            foreach ($this->data as $row) {
-                if (fwrite($file, $this->serializeRow($row)) === false) {
-                    throw new \RuntimeException('Failed to write to the file: ' . $path);
+            if ($this->firstItem !== null) {
+                foreach ($this->data as $row) {
+                    if (fwrite($file, $this->serializeRow($row)) === false) {
+                        throw new \RuntimeException('Failed to write to the file: ' . $path);
+                    }
                 }
             }
 
