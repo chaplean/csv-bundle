@@ -368,13 +368,13 @@ class CsvWriterTest extends LogicalTestCase
         $success = $csvWriter->writeToFile('/tmp/test_file.csv');
         $this->assertTrue($success);
 
-        $csvReader = new CsvReader('/tmp/test_file.csv');
-        $readData = $csvReader->extractData(';');
+        $csvReader = new CsvReader('/tmp/test_file.csv', CsvReader::DEFAULT_DELIMITER, false);
+        $readData = $csvReader->get();
         $this->assertEquals(
             array(
                 array('string', 'integer', 'float'),
-                array('test""test', '42', '3.14'),
-                array('test""test', '42', '3.14'),
+                array('test"test', '42', '3.14'),
+                array('test"test', '42', '3.14'),
             ),
             $readData
         );

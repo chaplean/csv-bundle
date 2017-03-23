@@ -2,8 +2,6 @@
 
 namespace Chaplean\Bundle\CsvBundle\Utility;
 
-use Symfony\Component\Config\Definition\Exception\Exception;
-
 /**
  * Class CsvReader.
  *
@@ -17,54 +15,118 @@ class CsvReader
     const DEFAULT_DELIMITER = ';';
     const DEFAULT_SURROUNDING = '"';
     const DEFAULT_END_OF_LINE = "\n";
+    const KEY_INDEX = 0;
+    const KEY_HEADER = 1;
 
     /**
      * @var string
      */
-    private $file;
+    private $delimiter;
+
+    /**
+     * @var resource
+     */
+    private $fp;
+
+    /**
+     * @var boolean
+     */
+    private $hasHeader;
+
+    /**
+     * @var array
+     */
+    private $headers;
+
+    /**
+     * @var integer|null
+     */
+    private $length;
 
     /**
      * @var integer
      */
-    private $numColumn = -1;
+    private $keyNaming;
 
     /**
-     * @param string $file path of file
+     * @var integer
      */
-    public function __construct($file)
+    private $index;
+
+    /**
+     * @var integer
+     */
+    private $nbColumnsInFirstRow;
+
+    /**
+     * CsvReader constructor.
+     *
+     * @param string       $file
+     * @param string       $delimiter
+     * @param boolean      $hasHeader
+     * @param integer      $keyNaming
+     * @param null|integer $length
+     *
+     * @throws \Exception
+     */
+    public function __construct($file, $delimiter = self::DEFAULT_DELIMITER, $hasHeader = true, $keyNaming = self::KEY_INDEX, $length = null)
     {
-        if (!file_exists($file)) {
-            throw new Exception($file . ': No such file or directory');
+        if (!$hasHeader && $keyNaming === self::KEY_HEADER) {
+            throw new \Exception('Arguments incompatible ! ("KEY_HEADER" and "hasHeader" false is not possible)');
         }
 
-        $this->file = $file;
+        $this->fp = fopen($file, 'r');
+        $this->keyNaming = $keyNaming;
+        $this->delimiter = $delimiter;
+        $this->hasHeader = $hasHeader;
+        $this->length = $length;
+        $this->index = 0;
+
+        if ($this->keyNaming == self::KEY_HEADER || $this->hasHeader) {
+            $this->headers = fgetcsv($this->fp, $this->length, $this->delimiter);
+        }
     }
 
     /**
-     * Return a array
      *
-     * @param string  $delimiter        Delimiter used in the file
-     * @param integer $numberLineIgnore Number of line to ignore
-     * @param string  $endOfLine        Character used on end of lines
-     *
-     * @return array
-     * @throws Exception
      */
-    public function extractData($delimiter, $numberLineIgnore = 0, $endOfLine = self::DEFAULT_END_OF_LINE)
+    public function __destruct()
     {
-        $myFile = fopen($this->file, 'r');
+        if ($this->fp) {
+            fclose($this->fp);
+        }
+    }
 
+    /**
+     * @return array
+     */
+    public function get()
+    {
         $data = array();
 
-        $file = explode($endOfLine, fread($myFile, filesize($this->file)));
+        while (($row = fgetcsv($this->fp, $this->length, $this->delimiter)) !== false) {
+            if ($this->index === 0) {
+                $this->nbColumnsInFirstRow = count($row);
+            }
 
-        for ($i = 0; $i < $numberLineIgnore; $i++) {
-            array_shift($file);
-        }
+            $this->index++;
+            if (!$this->isValidRow($row)) {
+                continue;
+            }
 
-        foreach ($file as $line) {
-            if (!empty($line)) {
-                $data[] = $this->parseLine($line, $delimiter);
+            switch ($this->keyNaming) {
+                case self::KEY_HEADER:
+                    $rowNew = array();
+
+                    foreach ($this->headers as $i => $header) {
+                        $rowNew[$header] = $row[$i];
+                    }
+
+                    $data[] = $rowNew;
+                    break;
+                case self::KEY_INDEX:
+                default:
+                    $data[] = $row;
             }
         }
 
@@ -72,29 +134,21 @@ class CsvReader
     }
 
     /**
-     * Parse line without column name
+     * @param array $row
      *
-     * @param string $line      Line of file
-     * @param string $delimiter Delimiter of columns
-     *
-     * @return array
-     * @throws Exception
+     * @return boolean
+     * @throws \Exception
      */
-    private function parseLine($line, $delimiter)
+    public function isValidRow(array $row)
     {
-        $values = explode($delimiter, $line);
-        $dataLine = array();
-
-        if ($this->numColumn != count($values) && $this->numColumn != -1) {
-            throw new Exception('Bad line !');
+        if ($row[0] === null) {
+            return false;
         }
 
-        foreach ($values as $value) {
-            $dataLine[] = trim(str_replace(array("\r"), '', $value), '"');
+        if ($this->nbColumnsInFirstRow != count($row)) {
+            throw new \Exception('Bad line !');
         }
 
-        $this->numColumn = count($values);
-
-        return $dataLine;
+        return true;
     }
 }
