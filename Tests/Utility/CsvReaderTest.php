@@ -112,4 +112,34 @@ class CsvReaderTest extends LogicalTestCase
     {
         new CsvReader(__DIR__ . '/../Resources/csv/file_not_found.csv');
     }
+
+    /**
+     * @group v6.0
+     *
+     * @return void
+     * @expectedException Exception
+     */
+    public function testIncompatibleArgument()
+    {
+        new CsvReader(__DIR__ . '/../Resources/csv/file_not_found.csv', CsvReader::DEFAULT_DELIMITER, false, CsvReader::KEY_HEADER);
+    }
+
+    /**
+     * @group v6.0
+     *
+     * @return void
+     */
+    public function testExtractDateWithHeaderKey()
+    {
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_semicolon_delimiter_and_header.csv', CsvReader::DEFAULT_DELIMITER, true, CsvReader::KEY_HEADER);
+
+        $fileExtract = $csvReader->get();
+
+        $this->assertCount(2, $fileExtract);
+        $this->assertCount(3, $fileExtract[0]);
+        $this->assertArrayHasKey('Nom', $fileExtract[0]);
+        $this->assertArrayHasKey('Prenom', $fileExtract[0]);
+        $this->assertArrayHasKey('Age', $fileExtract[0]);
+        $this->assertEquals($fileExtract[0]['Nom'], 'Dupont');
+    }
 }
