@@ -16,13 +16,15 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 class CsvReaderTest extends LogicalTestCase
 {
     /**
+     * @group v6.0
+     *
      * @return void
      */
     public function testExtractDataWithHeader()
     {
         $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_semicolon_delimiter_and_header.csv');
 
-        $fileExtract = $csvReader->extractData(';', 1);
+        $fileExtract = $csvReader->get();
 
         $this->assertCount(2, $fileExtract);
         $this->assertCount(3, $fileExtract[0]);
@@ -30,41 +32,15 @@ class CsvReaderTest extends LogicalTestCase
     }
 
     /**
-     * @return void
-     */
-    public function testExtractDataWithSemicolonDelimiter()
-    {
-        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_semicolon_delimiter_and_header.csv');
-
-        $fileExtract = $csvReader->extractData(';', 1);
-
-        $this->assertCount(2, $fileExtract);
-        $this->assertCount(3, $fileExtract[0]);
-        $this->assertEquals($fileExtract[0][0], 'Dupont');
-    }
-
-    /**
+     * @group v6.0
+     *
      * @return void
      */
     public function testExtractDataWithoutHeader()
     {
-        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_tab_delimiter_without_header.csv');
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_tab_delimiter_without_header.csv', "\t", false);
 
-        $fileExtract = $csvReader->extractData("\t");
-
-        $this->assertCount(2, $fileExtract);
-        $this->assertCount(3, $fileExtract[0]);
-        $this->assertEquals($fileExtract[0][0], 'Dupont');
-    }
-
-    /**
-     * @return void
-     */
-    public function testExtractDataWithTabDelimiter()
-    {
-        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_tab_delimiter_without_header.csv');
-
-        $fileExtract = $csvReader->extractData("\t");
+        $fileExtract = $csvReader->get();
 
         $this->assertCount(2, $fileExtract);
         $this->assertCount(3, $fileExtract[0]);
@@ -72,17 +48,22 @@ class CsvReaderTest extends LogicalTestCase
     }
 
     /**
+     * @group v6.0
+     *
      * @return void
      */
     public function testExtractDataWithtHeaderAndLineEmpty()
     {
         $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_with_line_empty.csv');
 
-        $fileExtract = $csvReader->extractData(';', 1);
+        $fileExtract = $csvReader->get();
+
         $this->assertCount(2, $fileExtract);
     }
 
     /**
+     * @group v6.0
+     *
      * @return void
      * @expectedException Exception
      */
@@ -90,18 +71,37 @@ class CsvReaderTest extends LogicalTestCase
     {
         $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_invalid_number_column.csv');
 
-        $csvReader->extractData(';');
+        $csvReader->get();
     }
 
     /**
+     * @group v6.0
+     *
      * @return void
      */
-    public function testExtractDataWithMultipleLineToIgnore()
+    public function testExtractDataWithSemicolonInColumn()
     {
-        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_with_multiple_line_ignore.csv');
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_valid_with_semicolon_in_column.csv');
 
-        $fileExtract = $csvReader->extractData(';', 2);
+        $fileExtract = $csvReader->get();
+
         $this->assertCount(2, $fileExtract);
+        $this->assertEquals('Strong;Slow', $fileExtract[1][2]);
+    }
+
+    /**
+     * @group v6.0
+     *
+     * @return void
+     */
+    public function testExtractDataWithQuotation()
+    {
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_valid_with_quote_in_column.csv');
+
+        $fileExtract = $csvReader->get();
+
+        $this->assertCount(1, $fileExtract);
+        $this->assertEquals('"', $fileExtract[0][2]);
     }
 
     /**
