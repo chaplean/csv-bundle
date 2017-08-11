@@ -1,4 +1,0 @@
-#chaplean_csv:
-#    resource: '@ChapleanCsvBundle/Resources/config/routing.yml'
-#    prefix:   /
-

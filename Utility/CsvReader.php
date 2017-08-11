@@ -6,8 +6,8 @@ namespace Chaplean\Bundle\CsvBundle\Utility;
  * Class CsvReader.
  *
  * @package   Chaplean\Bundle\CsvBundle\Utility
- * @author    Valentin - Chaplean <valentin@chaplean.com>
- * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
+ * @author    Valentin - Chaplean <valentin@chaplean.coop>
+ * @copyright 2014 - 2015 Chaplean (http://www.chaplean.coop)
  * @since     0.1.0
  */
 class CsvReader
@@ -75,12 +75,16 @@ class CsvReader
             throw new \Exception('Arguments incompatible ! ("KEY_HEADER" and "hasHeader" false is not possible)');
         }
 
-        $this->fp = fopen($file, 'r');
+        $this->fp = @fopen($file, 'r');
         $this->keyNaming = $keyNaming;
         $this->delimiter = $delimiter;
         $this->hasHeader = $hasHeader;
         $this->length = $length;
         $this->index = 0;
+
+        if (!$this->fp) {
+            throw new \Exception('File not opened.');
+        }
 
         if ($this->keyNaming == self::KEY_HEADER || $this->hasHeader) {
             $this->headers = fgetcsv($this->fp, $this->length, $this->delimiter);

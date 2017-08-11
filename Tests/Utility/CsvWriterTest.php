@@ -3,44 +3,50 @@
 namespace Chaplean\Bundle\CsvBundle\Tests\Utility;
 
 use Chaplean\Bundle\CsvBundle\Tests\Model\TestModel;
+use Chaplean\Bundle\CsvBundle\Tests\Resources\LogicalTestCase;
 use Chaplean\Bundle\CsvBundle\Utility\CsvReader;
 use Chaplean\Bundle\CsvBundle\Utility\CsvWriter;
-use Chaplean\Bundle\UnitBundle\Test\LogicalTestCase;
+use Mockery;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * CsvWriterTest.php.
  *
- * @author    Valentin - Chaplean <valentin@chaplean.com>
- * @copyright 2014 - 2016 Chaplean (http://www.chaplean.com)
+ * @author    Valentin - Chaplean <valentin@chaplean.coop>
+ * @copyright 2014 - 2016 Chaplean (http://www.chaplean.coop)
  * @since     0.1.0
  */
 class CsvWriterTest extends LogicalTestCase
 {
     /**
+     * @doesNotPerformAssertions
      * @return void
      */
     public function testSetDataWithArray()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $csvWriter->setData(array(
-            new TestModel(),
-            new TestModel()
-        ));
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
+        );
 
         $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
         $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
     }
 
     /**
+     * @doesNotPerformAssertions
      * @return void
      */
     public function testSetDataWithGenerator()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData($this->generator());
 
@@ -56,8 +62,8 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSetDataWithEmptyArray()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData(array());
 
@@ -73,8 +79,8 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSetDataWithEmptyGenerator()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData($this->emptyGenerator());
 
@@ -83,12 +89,13 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @doesNotPerformAssertions
      * @return void
      */
     public function testSetDataWithEmptyArrayAndDataClass()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData(array(), TestModel::class);
 
@@ -97,12 +104,13 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @doesNotPerformAssertions
      * @return void
      */
     public function testSetDataWithEmptyGeneratorAndDataClass()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData($this->emptyGenerator(), TestModel::class);
 
@@ -116,8 +124,8 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSetDataWithInvalidData()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData(null);
     }
@@ -128,13 +136,15 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSerializeRowWithArrayChecksModelClass()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $csvWriter->setData(array(
-            new TestModel(),
-            new TestModel()
-        ));
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
+        );
 
         $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
         $serializeRow->invokeArgs($csvWriter, array(new \stdClass()));
@@ -146,8 +156,8 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSerializeRowWithGeneratorChecksModelClass()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData($this->generator());
 
@@ -160,13 +170,15 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSerializeRowWithArray()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $csvWriter->setData(array(
-            new TestModel(),
-            new TestModel()
-        ));
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
+        );
 
         $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
         $result = $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
@@ -179,8 +191,8 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSerializeRowWithGenerator()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData($this->generator());
 
@@ -195,13 +207,15 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSerializeHeadersWithArray()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $csvWriter->setData(array(
-            new TestModel(),
-            new TestModel()
-        ));
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
+        );
 
         $serializeHeaders = $this->getNotPublicMethod(CsvWriter::class, 'serializeHeaders');
         $result = $serializeHeaders->invokeArgs($csvWriter, array());
@@ -214,8 +228,8 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSerializeHeadersWithGenerator()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData($this->generator());
 
@@ -230,13 +244,15 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSerializeRowWithArrayWithCustomParameters()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $csvWriter->setData(array(
-            new TestModel(),
-            new TestModel()
-        ));
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
+        );
         $csvWriter->setDelimiter(',');
         $csvWriter->setSurrounding("'");
         $csvWriter->setEndOfLine("\r\n");
@@ -253,8 +269,8 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSerializeRowWithGeneratorWithCustomParameters()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData($this->generator());
         $csvWriter->setDelimiter(',');
@@ -273,13 +289,18 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSerializeHeadersWithArrayAndCustomParameters()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $translator->shouldReceive('trans')
+            ->andReturn('String', 'Integer', 'Float');
 
-        $csvWriter->setData(array(
-            new TestModel(),
-            new TestModel()
-        ));
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData(
+            [
+                new TestModel(),
+                new TestModel()
+            ]
+        );
         $csvWriter->setDelimiter(',');
         $csvWriter->setSurrounding("'");
         $csvWriter->setEndOfLine("\r\n");
@@ -296,8 +317,11 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testSerializeHeadersWithGeneratorAndCustomParameters()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $translator->shouldReceive('trans')
+            ->andReturn('String', 'Integer', 'Float');
+
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData($this->generator());
         $csvWriter->setDelimiter(',');
@@ -317,8 +341,8 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testWriteToResponseWithoutData()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->writeToResponse('test_file');
     }
@@ -329,8 +353,8 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testWriteToFileWithoutData()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->writeToFile('/tmp/test_file.csv');
     }
@@ -340,13 +364,15 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testWriteToResponse()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $csvWriter->setData(array(
-            new TestModel(),
-            new TestModel()
-        ));
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
+        );
 
         $response = $csvWriter->writeToResponse('test_file');
         $this->assertInstanceOf(StreamedResponse::class, $response);
@@ -360,8 +386,8 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testWriteToFile()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData($this->generator());
 
@@ -385,8 +411,8 @@ class CsvWriterTest extends LogicalTestCase
      */
     public function testWriteToFileFailToCreateDirectory()
     {
-        /** @var CsvWriter $csvWriter */
-        $csvWriter = $this->getContainer()->get('chaplean.csv.writer');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
         $csvWriter->setData($this->generator());
 

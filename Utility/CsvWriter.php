@@ -2,22 +2,21 @@
 
 namespace Chaplean\Bundle\CsvBundle\Utility;
 
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
-use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /***
  * Class CsvWriter.
  *
  * @package   Chaplean\Bundle\CsvBundle\Utility
- * @author    Valentin - Chaplean <valentin@chaplean.com>
- * @copyright 2014 - 2016 Chaplean (http://www.chaplean.com)
+ * @author    Valentin - Chaplean <valentin@chaplean.coop>
+ * @copyright 2014 - 2016 Chaplean (http://www.chaplean.coop)
  * @since     0.1.0
  */
 class CsvWriter
 {
-    /** @var Translator $translator */
+    /** @var TranslatorInterface $translator */
     protected $translator;
 
     /** @var array|\Iterator $data */
@@ -44,9 +43,9 @@ class CsvWriter
     /**
      * Construct
      *
-     * @param Translator $translator
+     * @param TranslatorInterface $translator
      */
-    public function __construct(Translator $translator)
+    public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
 
@@ -127,10 +126,12 @@ class CsvWriter
 
         if ($this->firstItem !== null) {
             $this->dataClass = get_class($this->firstItem);
-        } else if ($dataClass !== null) {
-            $this->dataClass = $dataClass;
         } else {
-            throw new \InvalidArgumentException('You have to provide $dataClass if $data can be empty');
+            if ($dataClass !== null) {
+                $this->dataClass = $dataClass;
+            } else {
+                throw new \InvalidArgumentException('You have to provide $dataClass if $data can be empty');
+            }
         }
     }
 
@@ -161,7 +162,7 @@ class CsvWriter
             throw new \LogicException('writeToResponse called before any data was set');
         }
 
-        $callback = function() {
+        $callback = function () {
             echo $this->serializeHeaders();
 
             if ($this->firstItem !== null) {
@@ -178,7 +179,7 @@ class CsvWriter
             $callback,
             Response::HTTP_OK,
             array(
-                'Content-Type' => 'text/csv',
+                'Content-Type'        => 'text/csv',
                 'Content-Disposition' => 'attachment; filename="' . $name . '.csv"'
             )
         );
@@ -187,7 +188,7 @@ class CsvWriter
     /**
      * Writes the csv to the given $file path
      *
-     * @param string  $path  Path to write to
+     * @param string $path Path to write to
      *
      * @return boolean Wether the write succeeded or not
      * @throws \LogicException
@@ -203,7 +204,7 @@ class CsvWriter
 
             $file = fopen($path, 'w');
 
-            if(fwrite($file, $this->serializeHeaders()) === false) {
+            if (fwrite($file, $this->serializeHeaders()) === false) {
                 throw new \RuntimeException('Failed to write to the file: ' . $path);
             }
 
@@ -262,11 +263,13 @@ class CsvWriter
         $rowClass = get_class($row);
 
         if ($this->dataClass !== $rowClass) {
-            throw new \InvalidArgumentException(sprintf(
-                'The content given to setData must always be of the same class: expected: %s, found: %s',
-                $this->dataClass,
-                $rowClass
-            ));
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The content given to setData must always be of the same class: expected: %s, found: %s',
+                    $this->dataClass,
+                    $rowClass
+                )
+            );
         }
 
         return $this->serialize(get_object_vars($row));
