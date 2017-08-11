@@ -16,6 +16,9 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 class CsvReaderTest extends TestCase
 {
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::get()
+     *
      * @group v6.0
      *
      * @return void
@@ -32,6 +35,9 @@ class CsvReaderTest extends TestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::get()
+     *
      * @group v6.0
      *
      * @return void
@@ -48,6 +54,9 @@ class CsvReaderTest extends TestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::get()
+     *
      * @group v6.0
      *
      * @return void
@@ -62,6 +71,9 @@ class CsvReaderTest extends TestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::get()
+     *
      * @group v6.0
      *
      * @return void
@@ -75,6 +87,9 @@ class CsvReaderTest extends TestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::get()
+     *
      * @group v6.0
      *
      * @return void
@@ -90,6 +105,9 @@ class CsvReaderTest extends TestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::get()
+     *
      * @group v6.0
      *
      * @return void
@@ -105,6 +123,8 @@ class CsvReaderTest extends TestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::__construct()
+     *
      * @return void
      * @expectedException Exception
      */
@@ -114,6 +134,8 @@ class CsvReaderTest extends TestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::__construct()
+     *
      * @group v6.0
      *
      * @return void
@@ -125,6 +147,9 @@ class CsvReaderTest extends TestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvReader::get()
+     *
      * @group v6.0
      *
      * @return void
