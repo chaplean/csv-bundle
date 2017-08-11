@@ -3,26 +3,28 @@
 namespace Chaplean\Bundle\CsvBundle\Tests\Utility;
 
 use Chaplean\Bundle\CsvBundle\Utility\CsvReader;
-use Chaplean\Bundle\UnitBundle\Test\LogicalTestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * CsvReaderTest.php.
  *
- * @author    Valentin - Chaplean <valentin@chaplean.com>
- * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
+ * @author    Valentin - Chaplean <valentin@chaplean.coop>
+ * @copyright 2014 - 2015 Chaplean (http://www.chaplean.coop)
  * @since     0.1.0
  */
-class CsvReaderTest extends LogicalTestCase
+class CsvReaderTest extends TestCase
 {
     /**
+     * @group v6.0
+     *
      * @return void
      */
     public function testExtractDataWithHeader()
     {
         $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_semicolon_delimiter_and_header.csv');
 
-        $fileExtract = $csvReader->extractData(';', 1);
+        $fileExtract = $csvReader->get();
 
         $this->assertCount(2, $fileExtract);
         $this->assertCount(3, $fileExtract[0]);
@@ -30,41 +32,15 @@ class CsvReaderTest extends LogicalTestCase
     }
 
     /**
-     * @return void
-     */
-    public function testExtractDataWithSemicolonDelimiter()
-    {
-        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_semicolon_delimiter_and_header.csv');
-
-        $fileExtract = $csvReader->extractData(';', 1);
-
-        $this->assertCount(2, $fileExtract);
-        $this->assertCount(3, $fileExtract[0]);
-        $this->assertEquals($fileExtract[0][0], 'Dupont');
-    }
-
-    /**
+     * @group v6.0
+     *
      * @return void
      */
     public function testExtractDataWithoutHeader()
     {
-        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_tab_delimiter_without_header.csv');
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_tab_delimiter_without_header.csv', "\t", false);
 
-        $fileExtract = $csvReader->extractData("\t");
-
-        $this->assertCount(2, $fileExtract);
-        $this->assertCount(3, $fileExtract[0]);
-        $this->assertEquals($fileExtract[0][0], 'Dupont');
-    }
-
-    /**
-     * @return void
-     */
-    public function testExtractDataWithTabDelimiter()
-    {
-        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_tab_delimiter_without_header.csv');
-
-        $fileExtract = $csvReader->extractData("\t");
+        $fileExtract = $csvReader->get();
 
         $this->assertCount(2, $fileExtract);
         $this->assertCount(3, $fileExtract[0]);
@@ -72,17 +48,22 @@ class CsvReaderTest extends LogicalTestCase
     }
 
     /**
+     * @group v6.0
+     *
      * @return void
      */
     public function testExtractDataWithtHeaderAndLineEmpty()
     {
         $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_with_line_empty.csv');
 
-        $fileExtract = $csvReader->extractData(';', 1);
+        $fileExtract = $csvReader->get();
+
         $this->assertCount(2, $fileExtract);
     }
 
     /**
+     * @group v6.0
+     *
      * @return void
      * @expectedException Exception
      */
@@ -90,18 +71,37 @@ class CsvReaderTest extends LogicalTestCase
     {
         $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_invalid_number_column.csv');
 
-        $csvReader->extractData(';');
+        $csvReader->get();
     }
 
     /**
+     * @group v6.0
+     *
      * @return void
      */
-    public function testExtractDataWithMultipleLineToIgnore()
+    public function testExtractDataWithSemicolonInColumn()
     {
-        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_with_multiple_line_ignore.csv');
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_valid_with_semicolon_in_column.csv');
 
-        $fileExtract = $csvReader->extractData(';', 2);
+        $fileExtract = $csvReader->get();
+
         $this->assertCount(2, $fileExtract);
+        $this->assertEquals('Strong;Slow', $fileExtract[1][2]);
+    }
+
+    /**
+     * @group v6.0
+     *
+     * @return void
+     */
+    public function testExtractDataWithQuotation()
+    {
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_valid_with_quote_in_column.csv');
+
+        $fileExtract = $csvReader->get();
+
+        $this->assertCount(1, $fileExtract);
+        $this->assertEquals('"', $fileExtract[0][2]);
     }
 
     /**
@@ -111,5 +111,35 @@ class CsvReaderTest extends LogicalTestCase
     public function testReadFileNotExists()
     {
         new CsvReader(__DIR__ . '/../Resources/csv/file_not_found.csv');
+    }
+
+    /**
+     * @group v6.0
+     *
+     * @return void
+     * @expectedException Exception
+     */
+    public function testIncompatibleArgument()
+    {
+        new CsvReader(__DIR__ . '/../Resources/csv/file_not_found.csv', CsvReader::DEFAULT_DELIMITER, false, CsvReader::KEY_HEADER);
+    }
+
+    /**
+     * @group v6.0
+     *
+     * @return void
+     */
+    public function testExtractDateWithHeaderKey()
+    {
+        $csvReader = new CsvReader(__DIR__ . '/../Resources/csv/test_csv_semicolon_delimiter_and_header.csv', CsvReader::DEFAULT_DELIMITER, true, CsvReader::KEY_HEADER);
+
+        $fileExtract = $csvReader->get();
+
+        $this->assertCount(2, $fileExtract);
+        $this->assertCount(3, $fileExtract[0]);
+        $this->assertArrayHasKey('Nom', $fileExtract[0]);
+        $this->assertArrayHasKey('Prenom', $fileExtract[0]);
+        $this->assertArrayHasKey('Age', $fileExtract[0]);
+        $this->assertEquals($fileExtract[0]['Nom'], 'Dupont');
     }
 }

@@ -2,179 +2,439 @@
 
 namespace Chaplean\Bundle\CsvBundle\Tests\Utility;
 
+use Chaplean\Bundle\CsvBundle\Tests\Model\TestModel;
+use Chaplean\Bundle\CsvBundle\Tests\Resources\LogicalTestCase;
+use Chaplean\Bundle\CsvBundle\Utility\CsvReader;
 use Chaplean\Bundle\CsvBundle\Utility\CsvWriter;
-use Chaplean\Bundle\UnitBundle\Test\LogicalTestCase;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use Mockery;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * CsvWriterTest.php.
  *
- * @author    Valentin - Chaplean <valentin@chaplean.com>
- * @copyright 2014 - 2015 Chaplean (http://www.chaplean.com)
+ * @author    Valentin - Chaplean <valentin@chaplean.coop>
+ * @copyright 2014 - 2016 Chaplean (http://www.chaplean.coop)
  * @since     0.1.0
  */
 class CsvWriterTest extends LogicalTestCase
 {
     /**
+     * @doesNotPerformAssertions
      * @return void
      */
-    public function testConstructCsvWriter()
+    public function testSetDataWithArray()
     {
-        $csvTool = new CsvWriter(';');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $this->assertEmpty($csvTool->getContentCsv());
-    }
-
-    /**
-     * @return void
-     */
-    public function testWriteHeader()
-    {
-        $csvTool = new CsvWriter(';');
-
-        $headers = array(
-            'ID', 'Firstname', 'Lastname', 'Age'
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
         );
 
-        $csvTool->writeHeader($headers);
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+    }
 
-        $this->assertEquals("ID;Firstname;Lastname;Age\n", $csvTool->getContentCsv());
+    /**
+     * @doesNotPerformAssertions
+     * @return void
+     */
+    public function testSetDataWithGenerator()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData($this->generator());
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage You have to provide $dataClass if $data can be empty
+     *
+     * @return void
+     */
+    public function testSetDataWithEmptyArray()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData(array());
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage You have to provide $dataClass if $data can be empty
+     *
+     * @return void
+     */
+    public function testSetDataWithEmptyGenerator()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData($this->emptyGenerator());
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+    }
+
+    /**
+     * @doesNotPerformAssertions
+     * @return void
+     */
+    public function testSetDataWithEmptyArrayAndDataClass()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData(array(), TestModel::class);
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+    }
+
+    /**
+     * @doesNotPerformAssertions
+     * @return void
+     */
+    public function testSetDataWithEmptyGeneratorAndDataClass()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData($this->emptyGenerator(), TestModel::class);
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
     }
 
     /**
      * @return void
+     * @expectedException \InvalidArgumentException
      */
-    public function testWriteContent()
+    public function testSetDataWithInvalidData()
     {
-        $csvTool = new CsvWriter(';');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $content = array(
-            array('1', 'Jean', 'Dupont', '23'),
-            array('2', 'Sophie', 'Dupuit', '22'),
+        $csvWriter->setData(null);
+    }
+
+    /**
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSerializeRowWithArrayChecksModelClass()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
         );
 
-        foreach ($content as $line) {
-            $csvTool->write($line);
-        }
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new \stdClass()));
+    }
 
-        $this->assertEquals("1;Jean;Dupont;23\n2;Sophie;Dupuit;22\n", $csvTool->getContentCsv());
+    /**
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSerializeRowWithGeneratorChecksModelClass()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData($this->generator());
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $serializeRow->invokeArgs($csvWriter, array(new \stdClass()));
     }
 
     /**
      * @return void
      */
-    public function testWriteWithDelimiterInContent()
+    public function testSerializeRowWithArray()
     {
-        $csvTool = new CsvWriter(';');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $content = array(
-            array('1', 'Jean', 'Dupon;t', '23'),
-            array('2', 'Sophie', 'Dupuit', '22'),
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
         );
 
-        foreach ($content as $line) {
-            $csvTool->write($line);
-        }
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $result = $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
 
-        $this->assertEquals("1;Jean;Dupon;t;23\n2;Sophie;Dupuit;22\n", $csvTool->getContentCsv());
+        $this->assertEquals('"test""test";"42";"3.14"' . "\n", $result);
     }
 
     /**
      * @return void
      */
-    public function testSaveWithTabEndOfLine()
+    public function testSerializeRowWithGenerator()
     {
-        $csvTool = new CsvWriter(';', "\t");
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $content = array(
-            array('1', 'Jean', 'Dupont', '23'),
-            array('2', 'Sophie', 'Dupuit', '22'),
+        $csvWriter->setData($this->generator());
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $result = $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+
+        $this->assertEquals('"test""test";"42";"3.14"' . "\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeHeadersWithArray()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
         );
 
-        foreach ($content as $line) {
-            $csvTool->write($line);
-        }
+        $serializeHeaders = $this->getNotPublicMethod(CsvWriter::class, 'serializeHeaders');
+        $result = $serializeHeaders->invokeArgs($csvWriter, array());
 
-        $this->assertEquals("1;Jean;Dupont;23\t2;Sophie;Dupuit;22\t", $csvTool->getContentCsv());
+        $this->assertEquals('"string";"integer";"float"' . "\n", $result);
     }
 
     /**
      * @return void
      */
-    public function testSaveInTwoFile()
+    public function testSerializeHeadersWithGenerator()
     {
-        $csv = new CsvWriter(';');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $content = array(
-            array('1', 'Jean', 'Dupont', '23'),
-            array('2', 'Sophie', 'Dupuit', '22'),
+        $csvWriter->setData($this->generator());
+
+        $serializeHeaders = $this->getNotPublicMethod(CsvWriter::class, 'serializeHeaders');
+        $result = $serializeHeaders->invokeArgs($csvWriter, array());
+
+        $this->assertEquals('"string";"integer";"float"' . "\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeRowWithArrayWithCustomParameters()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
+        );
+        $csvWriter->setDelimiter(',');
+        $csvWriter->setSurrounding("'");
+        $csvWriter->setEndOfLine("\r\n");
+        $csvWriter->setTranslationPrefix("test.csv");
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $result = $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+
+        $this->assertEquals("'test\"test','42','3.14'\r\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeRowWithGeneratorWithCustomParameters()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData($this->generator());
+        $csvWriter->setDelimiter(',');
+        $csvWriter->setSurrounding("'");
+        $csvWriter->setEndOfLine("\r\n");
+        $csvWriter->setTranslationPrefix("test.csv");
+
+        $serializeRow = $this->getNotPublicMethod(CsvWriter::class, 'serializeRow');
+        $result = $serializeRow->invokeArgs($csvWriter, array(new TestModel()));
+
+        $this->assertEquals("'test\"test','42','3.14'\r\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeHeadersWithArrayAndCustomParameters()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $translator->shouldReceive('trans')
+            ->andReturn('String', 'Integer', 'Float');
+
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData(
+            [
+                new TestModel(),
+                new TestModel()
+            ]
+        );
+        $csvWriter->setDelimiter(',');
+        $csvWriter->setSurrounding("'");
+        $csvWriter->setEndOfLine("\r\n");
+        $csvWriter->setTranslationPrefix("test.csv");
+
+        $serializeHeaders = $this->getNotPublicMethod(CsvWriter::class, 'serializeHeaders');
+        $result = $serializeHeaders->invokeArgs($csvWriter, array());
+
+        $this->assertEquals("'String','Integer','Float'\r\n", $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSerializeHeadersWithGeneratorAndCustomParameters()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $translator->shouldReceive('trans')
+            ->andReturn('String', 'Integer', 'Float');
+
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData($this->generator());
+        $csvWriter->setDelimiter(',');
+        $csvWriter->setSurrounding("'");
+        $csvWriter->setEndOfLine("\r\n");
+        $csvWriter->setTranslationPrefix("test.csv");
+
+        $serializeHeaders = $this->getNotPublicMethod(CsvWriter::class, 'serializeHeaders');
+        $result = $serializeHeaders->invokeArgs($csvWriter, array());
+
+        $this->assertEquals("'String','Integer','Float'\r\n", $result);
+    }
+
+    /**
+     * @return void
+     * @expectedException \LogicException
+     */
+    public function testWriteToResponseWithoutData()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->writeToResponse('test_file');
+    }
+
+    /**
+     * @return void
+     * @expectedException \LogicException
+     */
+    public function testWriteToFileWithoutData()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->writeToFile('/tmp/test_file.csv');
+    }
+
+    /**
+     * @return void
+     */
+    public function testWriteToResponse()
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
+
+        $csvWriter->setData(
+            array(
+                new TestModel(),
+                new TestModel()
+            )
         );
 
-        foreach ($content as $line) {
-            $csv->write($line);
-        }
+        $response = $csvWriter->writeToResponse('test_file');
+        $this->assertInstanceOf(StreamedResponse::class, $response);
 
-        $this->assertEquals("1;Jean;Dupont;23\n2;Sophie;Dupuit;22\n", $csv->getContentCsv());
-
-        $file1 = '/tmp/test1.csv';
-        $file2 = '/tmp/test2.csv';
-
-        $csv->saveCsv($file1);
-        $csv->saveCsv($file2);
-
-        $this->assertTrue(file_exists($file1));
-        $this->assertTrue(file_exists($file2));
-    }
-
-    /**
-     * @return void
-     * @expectedException Exception
-     */
-    public function testSaveWithoutFilename()
-    {
-        $csvTool = new CsvWriter(';');
-
-        $csvTool->saveCsv(null);
+        // Can't test generated output because expectOutputString is based on ob_flush
+        // and we need to call it in streamCallback().
     }
 
     /**
      * @return void
      */
-    public function testSaveWithFilename()
+    public function testWriteToFile()
     {
-        $fileName = '/tmp/test';
-        $csvTool = new CsvWriter(';');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $csvTool->saveCsv($fileName);
+        $csvWriter->setData($this->generator());
 
-        $this->assertTrue(file_exists($fileName));
+        $success = $csvWriter->writeToFile('/tmp/test_file.csv');
+        $this->assertTrue($success);
+
+        $csvReader = new CsvReader('/tmp/test_file.csv', CsvReader::DEFAULT_DELIMITER, false);
+        $readData = $csvReader->get();
+        $this->assertEquals(
+            array(
+                array('string', 'integer', 'float'),
+                array('test"test', '42', '3.14'),
+                array('test"test', '42', '3.14'),
+            ),
+            $readData
+        );
     }
 
     /**
      * @return void
-     * @expectedException Exception
-     * @expectedExceptionMessage fopen(/folder/test): failed to open stream: No such file or directory
      */
-    public function testSaveWithFilenamePathNotExsit()
+    public function testWriteToFileFailToCreateDirectory()
     {
-        $fileName = '/folder/test';
-        $csvTool = new CsvWriter(';');
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $csvWriter = new CsvWriter($translator);
 
-        $csvTool->saveCsv($fileName);
+        $csvWriter->setData($this->generator());
 
-        $this->assertFalse(file_exists($fileName));
+        $success = $csvWriter->writeToFile('/sys/dir/test.csv');
+        $this->assertFalse($success);
     }
 
     /**
-     * @return void
-     * @expectedException Exception
+     * @return \Generator
      */
-    public function testWriteHeaderAfterWriteContent()
+    public function generator()
     {
-        $csvTool = new CsvWriter(';', "\t");
+        yield new TestModel();
+        yield new TestModel();
+    }
 
-        $csvTool->write(array('1', 'Jean', 'Dupont', '23'));
-
-        $csvTool->writeHeader(array('ID', 'Firstname', 'Lastname', 'Age'));
+    /**
+     * @return \Generator
+     */
+    public function emptyGenerator()
+    {
+        return;
+        yield;
     }
 }
