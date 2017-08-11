@@ -20,6 +20,10 @@ use Symfony\Component\Translation\TranslatorInterface;
 class CsvWriterTest extends LogicalTestCase
 {
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @doesNotPerformAssertions
      * @return void
      */
@@ -40,6 +44,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @doesNotPerformAssertions
      * @return void
      */
@@ -55,6 +63,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage You have to provide $dataClass if $data can be empty
      *
@@ -72,6 +84,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage You have to provide $dataClass if $data can be empty
      *
@@ -89,6 +105,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @doesNotPerformAssertions
      * @return void
      */
@@ -104,6 +124,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @doesNotPerformAssertions
      * @return void
      */
@@ -119,6 +143,9 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     *
      * @return void
      * @expectedException \InvalidArgumentException
      */
@@ -131,6 +158,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @return void
      * @expectedException \InvalidArgumentException
      */
@@ -151,6 +182,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @return void
      * @expectedException \InvalidArgumentException
      */
@@ -166,6 +201,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @return void
      */
     public function testSerializeRowWithArray()
@@ -187,6 +226,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @return void
      */
     public function testSerializeRowWithGenerator()
@@ -203,6 +246,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeHeaders()
+     *
      * @return void
      */
     public function testSerializeHeadersWithArray()
@@ -224,6 +271,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeHeaders()
+     *
      * @return void
      */
     public function testSerializeHeadersWithGenerator()
@@ -240,6 +291,13 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setSurrounding()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setSurrounding()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setTranslationPrefix()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @return void
      */
     public function testSerializeRowWithArrayWithCustomParameters()
@@ -265,6 +323,10 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::setData()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeRow()
+     *
      * @return void
      */
     public function testSerializeRowWithGeneratorWithCustomParameters()
@@ -285,6 +347,9 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeHeaders()
+     *
      * @return void
      */
     public function testSerializeHeadersWithArrayAndCustomParameters()
@@ -313,6 +378,9 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::serializeHeaders()
+     *
      * @return void
      */
     public function testSerializeHeadersWithGeneratorAndCustomParameters()
@@ -336,6 +404,9 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::writeToResponse()
+     *
      * @return void
      * @expectedException \LogicException
      */
@@ -348,6 +419,9 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::writeToFile()
+     *
      * @return void
      * @expectedException \LogicException
      */
@@ -360,6 +434,9 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::writeToResponse()
+     *
      * @return void
      */
     public function testWriteToResponse()
@@ -382,6 +459,9 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::writeToFile()
+     *
      * @return void
      */
     public function testWriteToFile()
@@ -407,6 +487,9 @@ class CsvWriterTest extends LogicalTestCase
     }
 
     /**
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::__construct()
+     * @covers \Chaplean\Bundle\CsvBundle\Utility\CsvWriter::writeToFile()
+     *
      * @return void
      */
     public function testWriteToFileFailToCreateDirectory()
