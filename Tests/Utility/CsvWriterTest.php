@@ -7,6 +7,7 @@ use Chaplean\Bundle\CsvBundle\Tests\Resources\LogicalTestCase;
 use Chaplean\Bundle\CsvBundle\Utility\CsvReader;
 use Chaplean\Bundle\CsvBundle\Utility\CsvWriter;
 use Mockery;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -30,7 +31,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSetDataWithArray()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData(
             array(
@@ -54,7 +56,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSetDataWithGenerator()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData($this->generator());
 
@@ -75,7 +78,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSetDataWithEmptyArray()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData(array());
 
@@ -96,7 +100,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSetDataWithEmptyGenerator()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData($this->emptyGenerator());
 
@@ -115,7 +120,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSetDataWithEmptyArrayAndDataClass()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData(array(), TestModel::class);
 
@@ -134,7 +140,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSetDataWithEmptyGeneratorAndDataClass()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData($this->emptyGenerator(), TestModel::class);
 
@@ -152,7 +159,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSetDataWithInvalidData()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData(null);
     }
@@ -168,7 +176,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSerializeRowWithArrayChecksModelClass()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData(
             array(
@@ -192,7 +201,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSerializeRowWithGeneratorChecksModelClass()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData($this->generator());
 
@@ -210,7 +220,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSerializeRowWithArray()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData(
             array(
@@ -235,7 +246,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSerializeRowWithGenerator()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData($this->generator());
 
@@ -255,7 +267,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSerializeHeadersWithArray()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData(
             array(
@@ -280,7 +293,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSerializeHeadersWithGenerator()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData($this->generator());
 
@@ -303,7 +317,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSerializeRowWithArrayWithCustomParameters()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData(
             array(
@@ -332,7 +347,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testSerializeRowWithGeneratorWithCustomParameters()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData($this->generator());
         $csvWriter->setDelimiter(',');
@@ -358,7 +374,8 @@ class CsvWriterTest extends LogicalTestCase
         $translator->shouldReceive('trans')
             ->andReturn('String', 'Integer', 'Float');
 
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData(
             [
@@ -389,7 +406,8 @@ class CsvWriterTest extends LogicalTestCase
         $translator->shouldReceive('trans')
             ->andReturn('String', 'Integer', 'Float');
 
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData($this->generator());
         $csvWriter->setDelimiter(',');
@@ -413,7 +431,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testWriteToResponseWithoutData()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->writeToResponse('test_file');
     }
@@ -428,7 +447,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testWriteToFileWithoutData()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->writeToFile('/tmp/test_file.csv');
     }
@@ -442,7 +462,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testWriteToResponse()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData(
             array(
@@ -467,7 +488,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testWriteToFile()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData($this->generator());
 
@@ -495,7 +517,8 @@ class CsvWriterTest extends LogicalTestCase
     public function testWriteToFileFailToCreateDirectory()
     {
         $translator = Mockery::mock(TranslatorInterface::class);
-        $csvWriter = new CsvWriter($translator);
+        $session = Mockery::mock(SessionInterface::class);
+        $csvWriter = new CsvWriter($translator, $session);
 
         $csvWriter->setData($this->generator());
 

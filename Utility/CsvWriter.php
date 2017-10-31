@@ -3,6 +3,7 @@
 namespace Chaplean\Bundle\CsvBundle\Utility;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -18,6 +19,9 @@ class CsvWriter
 {
     /** @var TranslatorInterface $translator */
     protected $translator;
+
+    /** @var SessionInterface $session */
+    protected $session;
 
     /** @var array|\Iterator $data */
     protected $data;
@@ -44,10 +48,12 @@ class CsvWriter
      * Construct
      *
      * @param TranslatorInterface $translator
+     * @param SessionInterface    $session
      */
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, SessionInterface $session)
     {
         $this->translator = $translator;
+        $this->session = $session;
 
         $this->data = null;
         $this->firstItem = null;
@@ -163,6 +169,11 @@ class CsvWriter
         }
 
         $callback = function () {
+            // Workaround for https://github.com/symfony/symfony/issues/12423
+            if (!$this->session->isStarted()) {
+                $this->session->start();
+            }
+
             echo $this->serializeHeaders();
 
             if ($this->firstItem !== null) {
