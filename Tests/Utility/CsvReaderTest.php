@@ -22,6 +22,7 @@ class CsvReaderTest extends TestCase
      * @group v6.0
      *
      * @return void
+     * @throws \Exception
      */
     public function testExtractDataWithHeader()
     {
@@ -41,6 +42,7 @@ class CsvReaderTest extends TestCase
      * @group v6.0
      *
      * @return void
+     * @throws \Exception
      */
     public function testExtractDataWithoutHeader()
     {
@@ -60,6 +62,7 @@ class CsvReaderTest extends TestCase
      * @group v6.0
      *
      * @return void
+     * @throws \Exception
      */
     public function testExtractDataWithtHeaderAndLineEmpty()
     {
@@ -78,6 +81,7 @@ class CsvReaderTest extends TestCase
      *
      * @return void
      * @expectedException Exception
+     * @throws \Exception
      */
     public function testExtractDataWithtInvalidColumn()
     {
@@ -93,6 +97,7 @@ class CsvReaderTest extends TestCase
      * @group v6.0
      *
      * @return void
+     * @throws \Exception
      */
     public function testExtractDataWithSemicolonInColumn()
     {
@@ -111,6 +116,7 @@ class CsvReaderTest extends TestCase
      * @group v6.0
      *
      * @return void
+     * @throws \Exception
      */
     public function testExtractDataWithQuotation()
     {
@@ -127,6 +133,7 @@ class CsvReaderTest extends TestCase
      *
      * @return void
      * @expectedException Exception
+     * @throws \Exception
      */
     public function testReadFileNotExists()
     {
@@ -140,6 +147,7 @@ class CsvReaderTest extends TestCase
      *
      * @return void
      * @expectedException Exception
+     * @throws \Exception
      */
     public function testIncompatibleArgument()
     {
@@ -153,6 +161,7 @@ class CsvReaderTest extends TestCase
      * @group v6.0
      *
      * @return void
+     * @throws \Exception
      */
     public function testExtractDateWithHeaderKey()
     {
