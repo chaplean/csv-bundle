@@ -1,4 +1,8 @@
 services:
+    _defaults:
+        autowire: true
+        public: true
+
     chaplean.csv.writer:
         class: Chaplean\Bundle\CsvBundle\Utility\CsvWriter
         arguments: ['@translator.default', '@session']
